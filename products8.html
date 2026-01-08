@@ -1,0 +1,177 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MedTech — Products</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    .floating-nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border: 1px solid rgba(150,160,170,0.12);
+    }
+    .nav-link {
+      position: relative;
+      padding: 0.5rem 0.75rem;
+      border-radius: 8px;
+    }
+    .nav-link::after {
+      content: '';
+      position: absolute;
+      left: 10%;
+      right: 10%;
+      bottom: 6px;
+      height: 3px;
+      border-radius: 999px;
+      background: linear-gradient(90deg, #0ea5a0, #1e6fb8);
+      transform: scaleX(0);
+      transform-origin: center;
+      transition: transform .28s cubic-bezier(.2,.9,.3,1);
+      opacity: 0.95;
+    }
+    .nav-link:hover::after {
+      transform: scaleX(1);
+    }
+    .product-card {
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid rgba(200,210,220,0.45);
+      box-shadow: 0 8px 30px rgba(8,15,30,0.06);
+      backdrop-filter: blur(14px);
+      border-radius: 14px;
+      padding: 1rem;
+      transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s ease;
+    }
+    .product-card:hover {
+      transform: translateY(-8px);
+      box-shadow: 0 24px 48px rgba(12,25,40,0.12);
+    }
+    .product-img {
+      width: 100%;
+      height: 160px;
+      object-fit: cover;
+      border-radius: 0.5rem;
+    }
+    .btn-cta {
+      background: linear-gradient(90deg, #0ea5a0, #1e6fb8);
+      color: white;
+      font-weight: 600;
+      border: none;
+      border-radius: 8px;
+      transition: all .25s ease;
+      box-shadow: 0 4px 14px rgba(30, 111, 184, 0.3);
+    }
+    .btn-cta:hover {
+      transform: translateY(-2px);
+      box-shadow: 0 8px 20px rgba(30, 111, 184, 0.4);
+      opacity: 0.95;
+    }
+  </style>
+</head>
+<body class="pt-24 bg-pattern">
+  <nav class="floating-nav glass-card py-3">
+    <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+      <div class="flex items-center gap-3">
+        <a href="MedTech.html" class="flex items-center gap-3">
+          <img src="C:\Users\DeLL\Downloads\8e20625e-7b5d-4fd2-aa1e-99ba54c21bc3.png" alt="MedTech Logo" class="w-15 h-11 rounded-lg shadow-md" />
+          <div class="leading-tight">
+            <div class="text-sm text-slate-700 font-semibold">MedTech</div>
+            <div class="text-xs text-slate-500">Trusted. Fast. Human.</div>
+          </div>
+        </a>
+      </div>
+      <div class="hidden md:flex items-center gap-2">
+        <a class="nav-link text-sm text-slate-700 px-3" href="medtech8.html">Home</a>
+        <a class="nav-link text-sm text-slate-700 px-3" href="products8.html">Products</a>
+        <a class="nav-link text-sm text-slate-700 px-3" href="about8.html">About</a>
+        <a class="nav-link text-sm text-slate-700 px-3" href="contact8.html">Contact</a>
+      </div>
+    </div>
+  </nav>
+
+  <section class="max-w-7xl mx-auto px-4 py-12">
+    <div class="flex justify-between items-center mb-6">
+      <h2 class="text-xl font-semibold">All Products</h2>
+      <div class="relative w-64">
+        <input id="searchBar" placeholder="Search products..." class="w-full pl-10 pr-4 py-3 rounded-lg border border-slate-200 bg-white/4 backdrop-blur-sm" />
+        <div class="absolute left-3 top-3 opacity-60">
+          <svg width="18" height="18" viewBox="0 0 24 24" fill="none" stroke="#06202a" stroke-width="1.6"><path d="M21 21l-6-6"/><path d="M11 5a6 6 0 1 0 0 12 6 6 0 0 0 0-12z"/></svg>
+        </div>
+      </div>
+    </div>
+    <div id="productsContainer" class="grid grid-cols-1 sm:grid-cols-2 md:grid-cols-3 lg:grid-cols-4 gap-6"></div>
+  </section>
+
+  <div id="cart-bubble" class="fixed bottom-6 right-6 bg-gradient-to-r from-green-500 to-blue-500 text-white rounded-full shadow-lg w-14 h-14 flex items-center justify-center text-lg font-bold cursor-pointer hover:opacity-90">
+    🛒<span id="cart-count" class="ml-1">0</span>
+  </div>
+
+  <script>
+    const products = [
+      { id: 1, name: "Paracetamol 500mg", category: "General Health", price: 15.0, description: "Effective pain relief and fever reduction.", image: "https://ayushcare.in/cdn/shop/products/Calpol500.jpg?v=1747141376", alt: "Paracetamol 500mg pack" },
+      { id: 2, name: "Paracetamol 650mg", category: "General Health", price: 15.0, description: "Higher-strength formulation for fever and pain relief.", image: "https://cdn01.pharmeasy.in/dam/products/239912/calpol-650mg-strip-of-15-tablets-3-1679306421.jpg", alt: "Paracetamol 650mg pack" },
+      { id: 3, name: "Ibuprofen 400mg", category: "General Health", price: 15.0, description: "NSAID for pain, inflammation, and fever management.", image: "https://5.imimg.com/data5/SELLER/Default/2025/3/494779604/HN/TY/RG/219238906/ibuprofen-tablets-i-p-200mg-500x500.jpg", alt: "Ibuprofen 400mg pack" },
+      { id: 4, name: "Ibuprofen 600mg", category: "General Health", price: 15.0, description: "High-dose NSAID for acute inflammatory conditions.", image: "https://m.media-amazon.com/images/I/71HiQlXElCL._UF1000,1000_QL80_.jpg", alt: "Ibuprofen 600mg pack" },
+      { id: 5, name: "Aspirin 75mg", category: "General Health", price: 15.0, description: "Low-dose antiplatelet for heart attack prevention.", image: "https://www.netmeds.com/images/product-v1/600x600/42323/ecosprin_75_tablet_14s_34914_0_3.jpg", alt: "Aspirin 75mg pack" }
+    ];
+
+    let cart = JSON.parse(localStorage.getItem("cart")) || [];
+
+    function updateCartCount() {
+      const totalQty = cart.reduce((sum, item) => sum + item.quantity, 0);
+      document.getElementById("cart-count").textContent = totalQty;
+    }
+
+    function addToCart(product) {
+      const existing = cart.find(item => item.id === product.id);
+      if (existing) {
+        existing.quantity += 1;
+      } else {
+        cart.push({ ...product, quantity: 1 });
+      }
+      localStorage.setItem("cart", JSON.stringify(cart));
+      updateCartCount();
+    }
+
+    function renderProducts(items) {
+      document.getElementById("productsContainer").innerHTML = items.map(p => `
+        <div class="product-card">
+          <img src="${p.image}" alt="${p.alt}" class="product-img mb-4">
+          <h3 class="text-lg font-bold text-slate-900">${p.name}</h3>
+          <p class="text-sm text-slate-500 mb-2">${p.category}</p>
+          <p class="text-slate-900 font-semibold mb-2">₹${p.price.toFixed(2)}</p>
+          <p class="text-sm text-slate-600 mb-4">${p.description}</p>
+          <button onclick='addToCart(${JSON.stringify(p)})' class="btn-cta w-full py-2 rounded-md">Add to Cart</button>
+        </div>
+      `).join("");
+    }
+
+    document.getElementById("searchBar").addEventListener("input", () => {
+      const query = document.getElementById("searchBar").value.toLowerCase();
+      const filtered = products.filter(product =>
+        product.name.toLowerCase().includes(query) ||
+        product.category.toLowerCase().includes(query) ||
+        product.description.toLowerCase().includes(query)
+      );
+      renderProducts(filtered);
+    });
+
+    document.getElementById("cart-bubble").addEventListener("click", () => {
+      window.location.href = "cart.html";
+    });
+
+    renderProducts(products);
+    updateCartCount();
+  </script>
+</body>
+</html>

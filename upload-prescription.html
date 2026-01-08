@@ -1,0 +1,247 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MedTech - Upload Prescription</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --green-1: #0ea5a0; /* teal-green */
+      --green-2: #10b981;
+      --blue-1: #1e6fb8;
+      --blue-2: #245bb4;
+      --silver: rgba(200,210,220,0.45);
+      --glass: rgba(255,255,255,0.06);
+      --card-blur: 14px;
+    }
+
+    /* Page base */
+    html { scroll-behavior: smooth; }
+    body{
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg, rgba(14,165,160,0.04), rgba(36,91,180,0.02));
+      color: #0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Subtle SVG pattern background */
+    .bg-pattern{
+      background-image: radial-gradient(circle at 10% 20%, rgba(30,111,184,0.03), transparent 10%),
+                        linear-gradient(120deg, rgba(16,185,129,0.02), transparent 40%);
+    }
+
+    /* Page transitions (fade + slide) */
+    .page-enter { opacity: 0; transform: translateY(8px); }
+    .page-enter-active { transition: all 420ms cubic-bezier(.2,.9,.25,1); opacity:1; transform:none; }
+    .page-exit { opacity:1; }
+    .page-exit-active { opacity:0; transform:translateY(-6px); transition: all 280ms ease-in; }
+
+    /* Sticky nav with glass effect */
+    nav.sticky-nav{
+      position: sticky; top:0; z-index:60;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.20));
+      border-bottom: 1px solid rgba(150,160,170,0.12);
+    }
+
+    /* Nav link hover micro-interactions */
+    .nav-link{ position:relative; padding:0.5rem 0.75rem; border-radius:8px; }
+    .nav-link::after{
+      content: '';
+      position:absolute; left:10%; right:10%; bottom:6px; height:3px; border-radius:999px;
+      background: linear-gradient(90deg,var(--green-1), var(--blue-1));
+      transform: scaleX(0); transform-origin:center; transition:transform .28s cubic-bezier(.2,.9,.3,1);
+      opacity:0.95;
+    }
+    .nav-link:hover::after{ transform: scaleX(1); }
+
+    /* Floating glass cards */
+    .glass-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid var(--silver);
+      box-shadow: 0 8px 30px rgba(8,15,30,0.06);
+      backdrop-filter: blur(var(--card-blur));
+    }
+
+    /* CTA subtle animate */
+    .btn-cta{
+      background: linear-gradient(90deg,var(--green-2), var(--blue-2));
+      color:white; padding:0.65rem 1.05rem; border-radius:12px; font-weight:600;
+      box-shadow: 0 6px 18px rgba(36,91,180,0.12);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .btn-cta:hover{ transform: translateY(-4px) scale(1.01); box-shadow: 0 12px 30px rgba(36,91,180,0.15); }
+
+    /* Product grid - cards with subtle silver accent */
+    .product-card{
+      border-radius:14px; overflow:hidden; transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s ease;
+    }
+    .product-card:hover{ transform: translateY(-8px); box-shadow: 0 24px 48px rgba(12,25,40,0.12); }
+
+    /* Small utilities */
+    .accent-pill{ background: linear-gradient(90deg,var(--green-2), var(--blue-2)); color:white; padding:6px 10px; border-radius:999px; font-size:.78rem; }
+
+    /* Responsive hero graphic */
+    .hero-illustration svg{ width:100%; height:auto; display:block; }
+
+    /* Footer muted */
+    footer{ background: linear-gradient(180deg, rgba(6,11,20,0.97), rgba(8,13,20,0.98)); color:rgba(255,255,255,0.86); }
+
+    @media (min-width:768px){
+      .hero-heading{ font-size: clamp(2rem, 3.6vw, 3.25rem); }
+    }
+
+    /* Upload box styling */
+    .upload-box {
+      border: 2px dashed var(--silver);
+      transition: all 0.3s ease-in-out;
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      backdrop-filter: blur(var(--card-blur));
+    }
+    .upload-box:hover {
+      background: rgba(255,255,255,0.1);
+      border-color: var(--blue-1);
+    }
+
+    /* Floating nav */
+    .floating-nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border: 1px solid rgba(150,160,170,0.12);
+    }
+  </style>
+</head>
+<body class="bg-pattern">
+  <!-- animated page wrapper -->
+  <main id="page" class="page-enter page-enter-active">
+
+    <!-- NAVIGATION -->
+    <nav class="floating-nav glass-card py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <!-- Logo: custom image + wordmark -->
+          <a href="#home" class="flex items-center gap-3">
+            <img src="C:\Users\DeLL\Desktop\MedTech-Sources\8e20625e-7b5d-4fd2-aa1e-99ba54c21bc3.png" alt="MedTech Logo" class="w-15 h-11 rounded-lg shadow-md" />
+            <div class="leading-tight">
+              <div class="text-sm text-slate-700 font-semibold">MedTech</div>
+              <div class="text-xs text-slate-500">The Trusted Cure.</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2">
+          <a class="nav-link text-sm text-slate-700 px-3" href="medtech8.html">Home</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="products8.html">Products</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="services8.html">Services</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="about8.html">About</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="contact8.html">Contact</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <a href="signin8.html" class="btn-cta hidden md:inline-flex">Sign in</a>
+          <button id="mobileToggle" class="md:hidden p-2 rounded-md bg-white/30 backdrop-blur-sm">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06202a" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- UPLOAD PRESCRIPTION -->
+    <section class="max-w-4xl mx-auto px-4 py-16">
+      <div class="glass-card rounded-2xl p-6 md:p-8">
+        <div class="text-center mb-6">
+          <h1 class="text-2xl font-bold text-slate-900 mb-4">Upload Your Prescription</h1>
+          <p class="text-slate-600">
+            Please upload a valid prescription from your doctor. We accept PDF, JPG, and PNG formats up to 5MB in size.
+          </p>
+        </div>
+
+        <!-- Upload Form -->
+        <form id="uploadForm" class="space-y-6">
+          <div class="upload-box flex flex-col items-center justify-center p-8 rounded-xl cursor-pointer">
+            <svg xmlns="https://www.svgrepo.com/show/522308/text-document.svg" class="h-12 w-12 text-slate-700 mb-4" fill="none" viewBox="0 0 24 24" stroke="currentColor">
+              <path stroke-linecap="round" stroke-linejoin="round" stroke-width="2" d="M7 16a4 4 0 01-.88-7.903A5.978 5.978 0 006 9a6 6 0 1111.472 3.223A4.992 4.992 0 0118 16H7z" />
+            </svg>
+            <p class="text-slate-700">Drag & drop your file here or click to browse</p>
+            <input type="file" name="prescription" id="prescription" accept=".pdf,.jpg,.jpeg,.png" class="hidden" required>
+          </div>
+
+          <div>
+            <label for="notes" class="block text-sm font-medium text-slate-700 mb-2">Additional Notes (Optional)</label>
+            <textarea id="notes" name="notes" rows="4" class="w-full border border-slate-200 bg-white/6 backdrop-blur-sm rounded-lg p-3 focus:ring-2 focus:ring-blue-500 focus:border-transparent"></textarea>
+          </div>
+
+          <button type="submit" class="btn-cta w-full">Submit Prescription</button>
+        </form>
+
+        <!-- Success/Failure Message -->
+        <p id="message" class="mt-4 text-center font-semibold"></p>
+      </div>
+    </section>
+
+  </main>
+
+  <script>
+    // Add lightweight page transition on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const page = document.getElementById('page');
+      page.classList.remove('page-enter');
+      setTimeout(()=> page.classList.remove('page-enter-active'), 420);
+    });
+
+    // Tiny smooth mobile toggle (keeps nav simple)
+    document.getElementById('mobileToggle')?.addEventListener('click', ()=>{
+      alert('Mobile menu — integrate your off-canvas here.');
+    });
+
+    const uploadBox = document.querySelector('.upload-box');
+    const fileInput = document.getElementById('prescription');
+    const form = document.getElementById('uploadForm');
+    const message = document.getElementById('message');
+
+    // Click to open file picker
+    uploadBox.addEventListener('click', () => fileInput.click());
+
+    // Drag & drop behavior
+    uploadBox.addEventListener('dragover', (e) => {
+      e.preventDefault();
+      uploadBox.classList.add('bg-white/10');
+    });
+
+    uploadBox.addEventListener('dragleave', () => {
+      uploadBox.classList.remove('bg-white/10');
+    });
+
+    uploadBox.addEventListener('drop', (e) => {
+      e.preventDefault();
+      fileInput.files = e.dataTransfer.files;
+      uploadBox.classList.remove('bg-white/10');
+    });
+
+    // Handle form submission (demo only)
+    form.addEventListener('submit', (e) => {
+      e.preventDefault();
+      if (fileInput.files.length === 0) {
+        message.textContent = "Please select a file before submitting.";
+        message.classList.add('text-red-500');
+        return;
+      }
+      message.textContent = "Prescription uploaded successfully!";
+      message.classList.remove('text-red-500');
+      message.classList.add('text-green-500');
+    });
+  </script>
+</body>
+</html>

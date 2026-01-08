@@ -1,0 +1,299 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+  <meta charset="utf-8" />
+  <meta name="viewport" content="width=device-width,initial-scale=1" />
+  <title>MedTech — Admin Dashboard</title>
+  <link href="https://fonts.googleapis.com/css2?family=Inter:wght@300;400;600;700;800&display=swap" rel="stylesheet">
+  <script src="https://cdn.tailwindcss.com"></script>
+  <style>
+    :root{
+      --green-1: #0ea5a0; /* teal-green */
+      --green-2: #10b981;
+      --blue-1: #1e6fb8;
+      --blue-2: #245bb4;
+      --silver: rgba(200,210,220,0.45);
+      --glass: rgba(255,255,255,0.06);
+      --card-blur: 14px;
+    }
+
+    /* Page base */
+    html { scroll-behavior: smooth; }
+    body{
+      font-family: 'Inter', system-ui, -apple-system, 'Segoe UI', Roboto, 'Helvetica Neue', Arial;
+      background: linear-gradient(180deg, rgba(14,165,160,0.04), rgba(36,91,180,0.02));
+      color: #0f172a;
+      -webkit-font-smoothing:antialiased;
+      -moz-osx-font-smoothing:grayscale;
+    }
+
+    /* Subtle SVG pattern background */
+    .bg-pattern{
+      background-image: radial-gradient(circle at 10% 20%, rgba(30,111,184,0.03), transparent 10%),
+                        linear-gradient(120deg, rgba(16,185,129,0.02), transparent 40%);
+    }
+
+    /* Page transitions (fade + slide) */
+    .page-enter { opacity: 0; transform: translateY(8px); }
+    .page-enter-active { transition: all 420ms cubic-bezier(.2,.9,.25,1); opacity:1; transform:none; }
+    .page-exit { opacity:1; }
+    .page-exit-active { opacity:0; transform:translateY(-6px); transition: all 280ms ease-in; }
+
+    /* Sticky nav with glass effect */
+    nav.sticky-nav{
+      position: sticky; top:0; z-index:60;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: linear-gradient(180deg, rgba(255,255,255,0.35), rgba(255,255,255,0.20));
+      border-bottom: 1px solid rgba(150,160,170,0.12);
+    }
+
+    /* Nav link hover micro-interactions */
+    .nav-link{ position:relative; padding:0.5rem 0.75rem; border-radius:8px; }
+    .nav-link::after{
+      content: '';
+      position:absolute; left:10%; right:10%; bottom:6px; height:3px; border-radius:999px;
+      background: linear-gradient(90deg,var(--green-1), var(--blue-1));
+      transform: scaleX(0); transform-origin:center; transition:transform .28s cubic-bezier(.2,.9,.3,1);
+      opacity:0.95;
+    }
+    .nav-link:hover::after{ transform: scaleX(1); }
+
+    /* Floating glass cards */
+    .glass-card{
+      background: linear-gradient(180deg, rgba(255,255,255,0.06), rgba(255,255,255,0.03));
+      border: 1px solid var(--silver);
+      box-shadow: 0 8px 30px rgba(8,15,30,0.06);
+      backdrop-filter: blur(var(--card-blur));
+    }
+
+    /* CTA subtle animate */
+    .btn-cta{
+      background: linear-gradient(90deg,var(--green-2), var(--blue-2));
+      color:white; padding:0.65rem 1.05rem; border-radius:12px; font-weight:600;
+      box-shadow: 0 6px 18px rgba(36,91,180,0.12);
+      transition: transform .18s ease, box-shadow .18s ease;
+    }
+    .btn-cta:hover{ transform: translateY(-4px) scale(1.01); box-shadow: 0 12px 30px rgba(36,91,180,0.15); }
+
+    /* Product grid - cards with subtle silver accent */
+    .product-card{
+      border-radius:14px; overflow:hidden; transition: transform .28s cubic-bezier(.2,.9,.3,1), box-shadow .28s ease;
+    }
+    .product-card:hover{ transform: translateY(-8px); box-shadow: 0 24px 48px rgba(12,25,40,0.12); }
+
+    /* Small utilities */
+    .accent-pill{ background: linear-gradient(90deg,var(--green-2), var(--blue-2)); color:white; padding:6px 10px; border-radius:999px; font-size:.78rem; }
+
+    /* Responsive hero graphic */
+    .hero-illustration svg{ width:100%; height:auto; display:block; }
+
+    /* Footer muted */
+    footer{ background: linear-gradient(180deg, rgba(6,11,20,0.97), rgba(8,13,20,0.98)); color:rgba(255,255,255,0.86); }
+
+    @media (min-width:768px){
+      .hero-heading{ font-size: clamp(2rem, 3.6vw, 3.25rem); }
+    }
+  </style>
+  <style>
+    /* existing styles remain unchanged */
+    .floating-nav {
+      position: fixed;
+      top: 20px;
+      left: 50%;
+      transform: translateX(-50%);
+      z-index: 1000;
+      backdrop-filter: blur(8px) saturate(120%);
+      background: rgba(255, 255, 255, 0.35);
+      border-radius: 16px;
+      box-shadow: 0 8px 24px rgba(0,0,0,0.1);
+      padding-left: 1rem;
+      padding-right: 1rem;
+      border: 1px solid rgba(150,160,170,0.12);
+    }
+  </style>
+</head>
+<body class="bg-pattern">
+  <!-- animated page wrapper -->
+  <main id="page" class="page-enter page-enter-active">
+
+    <!-- NAVIGATION -->
+    <nav class="floating-nav glass-card py-3">
+      <div class="max-w-7xl mx-auto flex items-center justify-between gap-4">
+        <div class="flex items-center gap-3">
+          <!-- Logo: custom image + wordmark -->
+          <a href="#home" class="flex items-center gap-3">
+            <img src="C:\Users\DeLL\Desktop\MedTech-Sources\8e20625e-7b5d-4fd2-aa1e-99ba54c21bc3.png" alt="MedTech Logo" class="w-15 h-11 rounded-lg shadow-md" />
+            <div class="leading-tight">
+              <div class="text-sm text-slate-700 font-semibold">MedTech</div>
+              <div class="text-xs text-slate-500">The Trusted Cure.</div>
+            </div>
+          </a>
+        </div>
+
+        <div class="hidden md:flex items-center gap-2">
+          <a class="nav-link text-sm text-slate-700 px-3" href="medtech8.html">Home</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="products8.html">Products</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="services8.html">Services</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="about8.html">About</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="contact8.html">Contact</a>
+          <a class="nav-link text-sm text-slate-700 px-3" href="admin.html" style="background: linear-gradient(90deg,var(--green-1), var(--blue-1)); color: white; border-radius: 8px;">Admin</a>
+        </div>
+
+        <div class="flex items-center gap-3">
+          <button id="mobileToggle" class="md:hidden p-2 rounded-md bg-white/30 backdrop-blur-sm">
+            <svg width="20" height="20" viewBox="0 0 24 24" fill="none" stroke="#06202a" stroke-width="1.6"><path d="M3 6h18M3 12h18M3 18h18" stroke-linecap="round"/></svg>
+          </button>
+        </div>
+      </div>
+    </nav>
+
+    <!-- HERO -->
+    <section id="home" class="max-w-7xl mx-auto px-4 py-16 md:py-20 flex flex-col md:flex-row items-center gap-8">
+      <div class="md:w-6/12">
+        <h1 class="hero-heading font-bold text-slate-900 mb-4">Admin Dashboard: Manage Orders Efficiently</h1>
+        <p class="text-slate-600 mb-6">Oversee incoming orders, approve or reject requests, and ensure smooth distribution. Your control center for pharmacy operations.</p>
+        <div class="flex items-center gap-3">
+          <a href="#orders" class="btn-cta">View Orders</a>
+          <a href="medtech8.html" class="px-4 py-2 rounded-md border border-silver text-slate-700 hover:bg-white/6">Back to Home</a>
+        </div>
+
+        <div class="mt-6 grid grid-cols-4 gap-3 text-sm text-slate-700">
+          <div class="flex flex-col items-start">
+            <span class="accent-pill">Secure</span>
+            <small class="mt-2 text-xs">Encrypted data</small>
+          </div>
+          <div class="flex flex-col items-start">
+            <span class="accent-pill">Fast</span>
+            <small class="mt-2 text-xs">Real-time updates</small>
+          </div>
+          <div class="flex flex-col items-start">
+            <span class="accent-pill">Reliable</span>
+            <small class="mt-2 text-xs">Trusted system</small>
+          </div>
+          <div class="flex flex-col items-start">
+            <span class="accent-pill">Efficient</span>
+            <small class="mt-2 text-xs">Streamlined delivery</small>
+          </div>
+        </div>
+      </div>
+
+      <!-- 2D illustration / SVG (adapted for admin) -->
+      <div class="md:w-6/12 hero-illustration">
+        <svg viewBox="0 0 600 420" xmlns="https://uxwing.com/wp-content/themes/uxwing/download/e-commerce-currency-shopping/order-placed-purchased-icon.svg" role="img" aria-label="admin dashboard illustration">
+          <defs>
+            <linearGradient id="b1" x1="0" x2="1"><stop offset="0" stop-color="#10b981" /><stop offset="1" stop-color="#245bb4" /></linearGradient>
+          </defs>
+          <rect x="20" y="20" width="560" height="380" rx="22" fill="url(#b1)" opacity="0.06" />
+          <g transform="translate(40,60)" fill="none" stroke-linecap="round" stroke-linejoin="round">
+            <rect x="0" y="0" width="320" height="240" rx="16" fill="#fff" stroke="#e6eef6" stroke-width="1" opacity="0.95" />
+            <g transform="translate(14,16)">
+              <circle cx="36" cy="36" r="36" fill="#f7fbff" stroke="#dfeefb" />
+              <path d="M36 18v36M18 36h36" stroke="#10b981" stroke-width="4" stroke-linecap="round"/>
+              <rect x="96" y="8" width="160" height="40" rx="8" fill="#f2f7fb" stroke="#e2eef9"/>
+              <rect x="96" y="60" width="160" height="18" rx="6" fill="#f2f7fb"/>
+              <rect x="96" y="88" width="90" height="10" rx="6" fill="#eef6fb"/>
+            </g>
+            <g transform="translate(360,26)" opacity="0.95">
+              <rect x="0" y="0" width="120" height="40" rx="10" fill="#fff" stroke="#dfeefb" />
+              <circle cx="60" cy="96" r="40" fill="#fff" stroke="#dfeefb" />
+              <path d="M60 72v36M44 90h32" stroke="#245bb4" stroke-width="3.5"/>
+            </g>
+          </g>
+        </svg>
+      </div>
+    </section>
+
+    <!-- ORDERS SECTION (glass card) -->
+    <section id="orders" class="max-w-4xl mx-auto px-4 py-8">
+      <div class="glass-card rounded-2xl p-6 md:p-8">
+        <div class="flex items-center gap-4">
+          <svg width="46" height="46" viewBox="0 0 24 24" fill="none" stroke="#0f172a" stroke-width="1.6"><path d="M9 12h6m-6 4h6m2 5H7a2 2 0 0 1-2-2V5a2 2 0 0 1 2-2h5.586a1 1 0 0 1 .707.293l5.414 5.414a1 1 0 0 1 .293.707V19a2 2 0 0 1-2 2z"/></svg>
+          <div>
+            <h3 class="text-lg font-semibold">Incoming Orders</h3>
+            <p class="text-sm text-slate-600">Review and manage new orders from customers.</p>
+          </div>
+        </div>
+
+        <div class="mt-6" id="orderContainer">
+          <!-- Order panel will be inserted here -->
+        </div>
+      </div>
+    </section>
+
+    <!-- FOOTER -->
+    <footer id="contact" class="mt-12 py-12">
+      <div class="max-w-7xl mx-auto px-4 grid grid-cols-1 md:grid-cols-3 gap-8">
+        <div>
+          <h5 class="font-semibold text-white">MedTech</h5>
+          <p class="text-sm text-slate-300 mt-2">Trusted pharmacy services powered by clear processes and human expertise.</p>
+        </div>
+        <div>
+          <h6 class="font-medium text-slate-200">Contact</h6>
+          <p class="text-sm text-slate-300 mt-2">info@medtech.com<br/>+91 98765 43210</p>
+        </div>
+        <div>
+          <h6 class="font-medium text-slate-200">Hours</h6>
+          <p class="text-sm text-slate-300 mt-2">Mon-Fri 8am-8pm</p>
+        </div>
+      </div>
+    </footer>
+
+  </main>
+
+  <script>
+    // Add lightweight page transition on load
+    window.addEventListener('DOMContentLoaded', () => {
+      const page = document.getElementById('page');
+      page.classList.remove('page-enter');
+      setTimeout(()=> page.classList.remove('page-enter-active'), 420);
+    });
+
+    // Tiny smooth mobile toggle (keeps nav simple)
+    document.getElementById('mobileToggle')?.addEventListener('click', ()=>{
+      alert('Mobile menu — integrate your off-canvas here.');
+    });
+
+    // Order generation
+    function generateOrder(){
+      const ui = `
+        <div class='bg-white/8 backdrop-blur-sm rounded-xl p-6 max-w-md mx-auto border border-silver/50'>
+          <div class='flex items-center gap-3 mb-4'>
+            <img src="https://uxwing.com/wp-content/themes/uxwing/download/e-commerce-currency-shopping/order-placed-purchased-icon.svg" class="h-12 rounded-lg shadow-sm" />
+            <h2 class='font-semibold text-xl text-slate-900'>Incoming Order</h2>
+          </div>
+          <div class='space-y-2 text-slate-700 text-sm'>
+            <p><strong>Name:</strong> Mohan Rajoriya</p>
+            <p><strong>Payment:</strong> Pay on delivery (UPI)</p>
+            <p><strong>Address:</strong> RGM, Apollo Avenue, Bidhannagar, Durgapur </p>
+            <p><strong>Total:</strong> ₹624</p>
+          </div>
+          <div class='mt-4 grid grid-cols-2 gap-4'>
+            <div class='bg-white rounded-lg p-2 shadow-sm'>
+              <img src='https://ayushcare.in/cdn/shop/products/Dolo650.jpg?v=1747141378' alt='Dolo 650' class='w-full h-20 object-cover rounded' />
+              <p class='text-center text-sm mt-2'>Dolo 650 - 1strip</p>
+            </div>
+            <div class='bg-white rounded-lg p-2 shadow-sm'>
+              <img src='https://m.media-amazon.com/images/I/71799l2KZcL.jpg' alt='Allegra 120mg' class='w-full h-20 object-cover rounded' />
+              <p class='text-center text-sm mt-2'>Allegra 120mg</p>
+            </div>
+          </div>
+          <div class='flex gap-3 mt-6'>
+            <button class='btn-cta' onclick='forwardOrder()'>Forward to Distribution</button>
+            <button class='bg-green-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-green-600 transition' onclick='approveOrder()'>Approve</button>
+            <button class='bg-red-500 text-white px-4 py-2 rounded-md font-semibold hover:bg-red-600 transition'>Reject</button>
+          </div>
+        </div>`;
+      document.getElementById("orderContainer").innerHTML = ui;
+    }
+    function forwardOrder(){
+      alert("Order forwarded successfully.");
+      document.getElementById("orderContainer").innerHTML = "";
+    }
+    function approveOrder(){
+      alert("Order approved successfully!");
+      document.getElementById("orderContainer").innerHTML = "";
+    }
+    setTimeout(generateOrder, 800);
+  </script>
+</body>
+</html>
